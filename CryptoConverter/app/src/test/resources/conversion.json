@@ -1,0 +1,52 @@
+{
+  "RAW": {
+    "BTC": {
+      "USD": {
+        "TYPE": "5",
+        "MARKET": "CCCAGG",
+        "FROMSYMBOL": "BTC",
+        "TOSYMBOL": "USD",
+        "FLAGS": "2",
+        "PRICE": 2654.76,
+        "LASTUPDATE": 1500579813,
+        "LASTVOLUME": 0.01,
+        "LASTVOLUMETO": 25.200010000000002,
+        "LASTTRADEID": 113060238,
+        "VOLUME24HOUR": 242057.81730865533,
+        "VOLUME24HOURTO": 605070575.3945456,
+        "OPEN24HOUR": 2241.47,
+        "HIGH24HOUR": 2691.84,
+        "LOW24HOUR": 2234.14,
+        "LASTMARKET": "BTCE",
+        "CHANGE24HOUR": 413.2900000000004,
+        "CHANGEPCT24HOUR": 18.438346263835808,
+        "SUPPLY": 16459250,
+        "MKTCAP": 43695358530
+      }
+    }
+  },
+  "DISPLAY": {
+    "BTC": {
+      "USD": {
+        "FROMSYMBOL": "Ƀ",
+        "TOSYMBOL": "$",
+        "MARKET": "CryptoCompare Index",
+        "PRICE": "$ 2,654.76",
+        "LASTUPDATE": "Just now",
+        "LASTVOLUME": "Ƀ 0.01000",
+        "LASTVOLUMETO": "$ 25.2",
+        "LASTTRADEID": 113060238,
+        "VOLUME24HOUR": "Ƀ 242,057.8",
+        "VOLUME24HOURTO": "$ 605,070,575.4",
+        "OPEN24HOUR": "$ 2,241.47",
+        "HIGH24HOUR": "$ 2,691.84",
+        "LOW24HOUR": "$ 2,234.14",
+        "LASTMARKET": "BTCE",
+        "CHANGE24HOUR": "$ 413.29",
+        "CHANGEPCT24HOUR": "18.44",
+        "SUPPLY": "Ƀ 16,459,250",
+        "MKTCAP": "$ 43.7 B"
+      }
+    }
+  }
+}
