@@ -1,5 +1,7 @@
 package wizelineacademy.mvvm_sample.viewModel;
 
+import android.view.View;
+
 import wizelineacademy.mvvm_sample.model.DataBase;
 import wizelineacademy.mvvm_sample.model.Pojo;
 
@@ -31,8 +33,8 @@ public class PojoViewModel extends ViewModel {
         this.message = message;
     }
 
-    public void updateMessage() {
-        if (!capitalizeFirstLetters(message).equals(item.getMessage())) {
+    public void updateMessage(View view) {
+        if (!getMessage().equals(item.getMessage())) {
             item.setMessage(message);
             dataBase.updatePojo(item);
         }
