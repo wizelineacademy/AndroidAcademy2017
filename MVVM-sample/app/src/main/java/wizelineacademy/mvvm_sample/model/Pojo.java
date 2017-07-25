@@ -1,0 +1,26 @@
+package wizelineacademy.mvvm_sample.model;
+
+/**
+ * Created by Nicole Terc on 7/20/17.
+ */
+
+public class Pojo {
+    private int id;
+    private String message;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+}
