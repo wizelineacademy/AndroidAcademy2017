@@ -2,8 +2,6 @@ package com.wizeline.cryptoconverter.data.repo.retrofit;
 
 import com.wizeline.cryptoconverter.data.model.cryptocompare.ConversionResponse;
 
-import java.util.List;
-
 import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
