@@ -94,6 +94,9 @@ public class RetrofitCurrencyRepo implements ConversionRepo {
 
         return conversionService.convert(from.toUpperCase(), to.toUpperCase())
                 .flatMap(response -> {
+                    if(response.getMessage() != null ) {
+                        throw new Error(response.getMessage());
+                    }
                     String toUpper = to.toUpperCase();
                     String fromUpper = from.toUpperCase();
                     double change = Double.parseDouble(response.getRaw().get(fromUpper).get(toUpper).getChange());
@@ -121,6 +124,9 @@ public class RetrofitCurrencyRepo implements ConversionRepo {
 
         return conversionService.convert(stringBuilder.toString(), to.toUpperCase())
                 .flatMap(conversionResponse -> {
+                    if(conversionResponse.getMessage() != null ) {
+                        throw new Error(conversionResponse.getMessage());
+                    }
                     List<Conversion> conversions = new ArrayList<>();
                     for (String from : conversionResponse.getRaw().keySet()) {
                         Map<String, ConversionResponse.Conversion> rawConversions = conversionResponse.getRaw().get(from);

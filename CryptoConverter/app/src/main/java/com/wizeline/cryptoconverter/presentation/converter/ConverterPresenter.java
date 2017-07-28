@@ -5,7 +5,6 @@ import android.util.Log;
 import com.wizeline.cryptoconverter.data.repo.ConversionRepo;
 
 import java.text.NumberFormat;
-import java.util.List;
 import java.util.Locale;
 
 import io.reactivex.disposables.Disposable;
@@ -15,7 +14,6 @@ import io.reactivex.disposables.Disposable;
  */
 public class ConverterPresenter implements ConverterContract.ConverterPresenter {
 
-    private List<String> coins;
     private ConverterContract.ConverterView converterView;
     private ConversionRepo conversionRepo;
 
