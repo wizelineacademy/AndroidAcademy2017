@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/currency"
+        android:icon="@drawable/settings"
+        app:showAsAction="always"
+        android:title="@string/currency"/>
+
+    <item
+        android:id="@+id/converter"
+        android:icon="@drawable/converter"
+        app:showAsAction="always"
+        android:title="@string/converter"/>
+</menu>
