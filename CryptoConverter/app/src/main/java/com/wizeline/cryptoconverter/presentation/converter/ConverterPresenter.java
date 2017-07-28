@@ -31,7 +31,7 @@ public class ConverterPresenter implements ConverterContract.ConverterPresenter 
                 .subscribe(coins -> {
                     converterView.hideLoading();
                     converterView.showCoinsList(coins);
-                }, throwable -> converterView.showError(throwable.getMessage()));
+                }, throwable -> converterView.showFullScreenError(throwable.getMessage()));
     }
 
     @Override public void onDestroy() {
