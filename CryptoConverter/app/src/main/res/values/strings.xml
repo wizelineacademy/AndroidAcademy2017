@@ -2,4 +2,9 @@
     <string name="app_name">Crypto Converter</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="currency">Currency</string>
+    <string name="converter">Converter</string>
+    <string name="amount_to_convert">Amount to convert</string>
+    <string name="target_currency">Target currency</string>
+    <string name="convert">Convert</string>
+    <string name="retry">Retry</string>
 </resources>

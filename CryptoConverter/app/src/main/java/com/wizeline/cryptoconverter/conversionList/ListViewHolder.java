@@ -38,7 +38,7 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
     public void bindItem(Conversion item) {
         //Bind Text
         textFrom.setText(item.getFromSymbol());
-        textChange.setText(getFormattedChange(item.getChange(), item.getPrice()));
+        textChange.setText(getFormattedChange(item.getChange(), item.getPriceDisplay()));
 
         //Bind Images
         Picasso.with(itemView.getContext())

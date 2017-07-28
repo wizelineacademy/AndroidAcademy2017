@@ -9,14 +9,16 @@ public class Conversion {
     String toSymbol;
     String toImageUrl;
     double change;
-    String price;
+    String priceDisplay;
+    double price;
 
-    public Conversion(String fromSymbol, String fromImageUrl, String toSymbol, String toImageUrl, double change, String price) {
+    public Conversion(String fromSymbol, String fromImageUrl, String toSymbol, String toImageUrl, double change, String priceDisplay, double price) {
         this.fromSymbol = fromSymbol;
         this.fromImageUrl = fromImageUrl;
         this.toSymbol = toSymbol;
         this.toImageUrl = toImageUrl;
         this.change = change;
+        this.priceDisplay = priceDisplay;
         this.price = price;
     }
 
@@ -40,7 +42,11 @@ public class Conversion {
         return change;
     }
 
-    public String getPrice() {
+    public double getPrice() {
         return price;
+    }
+
+    public String getPriceDisplay() {
+        return priceDisplay;
     }
 }

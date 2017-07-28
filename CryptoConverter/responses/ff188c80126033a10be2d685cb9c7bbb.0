@@ -3,19 +3,19 @@ GET
 0
 HTTP/1.1 200 OK
 13
-Date: Thu, 20 Jul 2017 23:14:28 GMT
+Date: Fri, 28 Jul 2017 22:16:44 GMT
 Content-Type: application/json; charset=utf-8
 Transfer-Encoding: chunked
 Connection: keep-alive
-Set-Cookie: __cfduid=d2127b845fc6ab6706ffe0d2cae65a5511500592467; expires=Fri, 20-Jul-18 23:14:27 GMT; path=/; domain=.cryptocompare.com; HttpOnly
+Set-Cookie: __cfduid=d689e52a10c5b8e83fdd1e2a892757dc51501280203; expires=Sat, 28-Jul-18 22:16:43 GMT; path=/; domain=.cryptocompare.com; HttpOnly
 Cache-Control: private
 Access-Control-Allow-Origin: *
-CryptoCompare-VM: 1
+CryptoCompare-VM: 3
 Server: cloudflare-nginx
-CF-RAY: 38199de95d2c1fac-DFW
+CF-RAY: 385b34593a7e58f7-DFW
 Content-Encoding: gzip
-OkHttp-Sent-Millis: 1500592468006
-OkHttp-Received-Millis: 1500592468867
+OkHttp-Sent-Millis: 1501280203663
+OkHttp-Received-Millis: 1501280204333
 
 TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
 3

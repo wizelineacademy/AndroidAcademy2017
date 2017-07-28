@@ -10,11 +10,11 @@ Access-Control-Allow-Headers: Content-Type
 Cache-Control: public, max-age=29
 CryptoCompare-Cache-HIT: false
 Content-Encoding: gzip
-Date: Thu, 20 Jul 2017 23:14:29 GMT
+Date: Fri, 28 Jul 2017 22:16:45 GMT
 Connection: keep-alive
 Transfer-Encoding: chunked
-OkHttp-Sent-Millis: 1500592470210
-OkHttp-Received-Millis: 1500592470358
+OkHttp-Sent-Millis: 1501280205541
+OkHttp-Received-Millis: 1501280205707
 
 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
 4

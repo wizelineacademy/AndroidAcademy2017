@@ -1,7 +1,7 @@
 package com.wizeline.cryptoconverter.presentation.list;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -19,6 +19,7 @@ import com.wizeline.cryptoconverter.ConverterApplication;
 import com.wizeline.cryptoconverter.R;
 import com.wizeline.cryptoconverter.conversionList.ListAdapter;
 import com.wizeline.cryptoconverter.data.model.Conversion;
+import com.wizeline.cryptoconverter.presentation.converter.ConverterActivity;
 
 import java.util.List;
 
@@ -56,7 +57,7 @@ public class CurrencyListActivity extends AppCompatActivity implements CurrencyL
 
     @Override
     public void showError(String error) {
-        Snackbar.make(recyclerView, error, BaseTransientBottomBar.LENGTH_SHORT).show();
+        Snackbar.make(recyclerView, error, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
@@ -94,8 +95,13 @@ public class CurrencyListActivity extends AppCompatActivity implements CurrencyL
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.currency) {
-            showCurrencyDialog();
+        switch (item.getItemId()) {
+            case R.id.currency:
+                showCurrencyDialog();
+                break;
+            case R.id.converter:
+                startActivity(new Intent(this, ConverterActivity.class));
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

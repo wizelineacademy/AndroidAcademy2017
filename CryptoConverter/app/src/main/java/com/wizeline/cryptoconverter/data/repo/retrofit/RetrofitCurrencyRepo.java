@@ -1,6 +1,7 @@
 package com.wizeline.cryptoconverter.data.repo.retrofit;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.wizeline.cryptoconverter.BuildConfig;
 import com.wizeline.cryptoconverter.data.SchedulersProvider;
@@ -16,10 +17,8 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -60,7 +59,8 @@ public class RetrofitCurrencyRepo implements ConversionRepo {
 
     }
 
-    @Override public Observable<List<com.wizeline.cryptoconverter.data.model.Conversion>> getTopConversions(String to) {
+    @Override
+    public Observable<List<Conversion>> getTopConversions(String to) {
         return coinsService
                 .getCoins()
                 .flatMap(coinsResponse -> Observable.fromIterable(coinsResponse.getCoins().values()))
@@ -76,19 +76,37 @@ public class RetrofitCurrencyRepo implements ConversionRepo {
                 .observeOn(schedulersProvider.mainScheduler());
     }
 
-    @Override public Observable<Conversion> convert(String from, String to) {
+    @Override
+    public Observable<List<String>> getCoinsList() {
+        return coinsService
+                .getCoins()
+                .flatMap(coinsResponse -> Observable.fromIterable(coinsResponse.getCoins().values()))
+                .sorted((coin, t1) -> coin.getSortOrder() - t1.getSortOrder())
+                .map(Coin::getName)
+                .collect((Callable<List<String>>) ArrayList::new, List::add)
+                .flatMapObservable(Observable::just)
+                .subscribeOn(schedulersProvider.backgroundScheduler())
+                .observeOn(schedulersProvider.mainScheduler());
+    }
+
+    @Override
+    public Observable<Conversion> convert(String from, String to) {
+
         return conversionService.convert(from.toUpperCase(), to.toUpperCase())
                 .flatMap(response -> {
-                    double change = Double.parseDouble(response.getRaw().get(from).get(to).getChange());
-                    String fromSymbol = response.getDisplay().get(from).get(to).getFrom();
+                    String toUpper = to.toUpperCase();
+                    String fromUpper = from.toUpperCase();
+                    double change = Double.parseDouble(response.getRaw().get(fromUpper).get(toUpper).getChange());
+                    String fromSymbol = response.getDisplay().get(fromUpper).get(toUpper).getFrom();
 
-                    String toSymbol = response.getDisplay().get(from).get(to).getTo();
+                    String toSymbol = response.getDisplay().get(fromUpper).get(toUpper).getTo();
 
-                    String price = response.getDisplay().get(from).get(to).getPrice();
-                    return Observable.just(new Conversion(fromSymbol, null, toSymbol, null, change, price));
+                    String priceDisplay = response.getDisplay().get(fromUpper).get(toUpper).getPrice();
+                    double price = Double.parseDouble(response.getRaw().get(fromUpper).get(toUpper).getPrice());
+                    return Observable.just(new Conversion(fromSymbol, null, toSymbol, null, change, priceDisplay, price));
                 })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                .subscribeOn(schedulersProvider.backgroundScheduler())
+                .observeOn(schedulersProvider.mainScheduler());
     }
 
     private Observable<List<com.wizeline.cryptoconverter.data.model.Conversion>> convert(List<Coin> coins, String to) {
@@ -114,10 +132,11 @@ public class RetrofitCurrencyRepo implements ConversionRepo {
                             String toSymbol = displayConversions.get(to1).getTo();
                             String toUrl = String.format("http://s.xe.com/themes/xe/images/flags/big/%s.png", to1.toLowerCase());
 
-                            String price = displayConversions.get(to1).getPrice();
+                            String priceDisplay = displayConversions.get(to1).getPrice();
                             double change = Double.parseDouble(rawConversions.get(to1).getChange());
+                            double price = Double.parseDouble(rawConversions.get(to1).getPrice());
 
-                            Conversion conversion = new Conversion(fromSymbol, fromUrl, toSymbol, toUrl, change, price);
+                            Conversion conversion = new Conversion(fromSymbol, fromUrl, toSymbol, toUrl, change, priceDisplay, price);
                             conversions.add(conversion);
                         }
                     }
