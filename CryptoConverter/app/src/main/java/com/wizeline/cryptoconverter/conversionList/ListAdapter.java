@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.wizeline.cryptoconverter.R;
+import com.wizeline.cryptoconverter.conversionList.listItem.ListViewHolder;
 import com.wizeline.cryptoconverter.data.model.Conversion;
 
 import java.util.ArrayList;

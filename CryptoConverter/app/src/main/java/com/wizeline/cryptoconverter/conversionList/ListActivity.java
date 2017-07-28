@@ -1,75 +1,28 @@
 package com.wizeline.cryptoconverter.conversionList;
 
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.annotation.Nullable;
 
-import com.wizeline.cryptoconverter.ConverterApplication;
 import com.wizeline.cryptoconverter.R;
-import com.wizeline.cryptoconverter.data.model.Conversion;
+import com.wizeline.cryptoconverter.databinding.ActivityListBinding;
+import com.wizeline.cryptoconverter.mvvm.ViewModel;
+import com.wizeline.cryptoconverter.mvvm.ViewModelActivity;
 
-import java.util.List;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.observers.DisposableObserver;
-import io.reactivex.schedulers.Schedulers;
-
-public class ListActivity extends AppCompatActivity {
-
-    RecyclerView recyclerView;
-    ListAdapter adapter;
-    Disposable disposable;
+public class ListActivity extends ViewModelActivity {
+    ListViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list);
-        init();
-        loadData();
+        ActivityListBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_list);
+        binding.setViewModel(viewModel);
     }
 
-    private void init() {
-        //Init adapter
-        adapter = new ListAdapter();
-
-        //Init recyclerView
-        recyclerView = (RecyclerView) findViewById(R.id.list);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
-    }
-
-    private void loadData() {
-        disposable = ConverterApplication
-                .getConversionRepo()
-                .getTopConversions("mxn")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableObserver<List<Conversion>>() {
-                    @Override
-                    public void onNext(@NonNull List<Conversion> conversions) {
-                        adapter.setItems(conversions);
-                    }
-
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-                        e.printStackTrace();
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
+    @Nullable
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (!disposable.isDisposed()) {
-            disposable.dispose();
-        }
+    protected ViewModel createViewModel(@Nullable ViewModel.State savedViewModelState) {
+        viewModel = new ListViewModel(savedViewModelState, this);
+        return viewModel;
     }
 }

@@ -1,53 +1,44 @@
-package com.wizeline.cryptoconverter.conversionList;
+package com.wizeline.cryptoconverter.conversionList.listItem;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.DynamicDrawableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.ImageSpan;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
 import com.wizeline.cryptoconverter.R;
 import com.wizeline.cryptoconverter.data.model.Conversion;
+import com.wizeline.cryptoconverter.mvvm.ViewModel;
 
 /**
  * Created by Nicole Terc on 7/27/17.
  */
 
-public class ListViewHolder extends RecyclerView.ViewHolder {
+public class ListItemViewModel extends ViewModel {
+    Conversion item;
+    Context context;
 
-    ImageView imageFrom;
-    TextView textFrom;
-    ImageView imageTo;
-    TextView textChange;
-
-
-    public ListViewHolder(View itemView) {
-        super(itemView);
-        imageFrom = itemView.findViewById(R.id.image_from);
-        textFrom = itemView.findViewById(R.id.text_from);
-        imageTo = itemView.findViewById(R.id.image_to);
-        textChange = itemView.findViewById(R.id.text_change);
+    public ListItemViewModel(Context context) {
+        super(null);
+        this.context = context;
     }
 
-    public void bindItem(Conversion item) {
-        //Bind Text
-        textFrom.setText(item.getFromSymbol());
-        textChange.setText(getFormattedChange(item.getChange(), item.getPrice()));
+    public void setItem(Conversion item) {
+        this.item = item;
+        notifyChange();
+    }
 
-        //Bind Images
-        Picasso.with(itemView.getContext())
-                .load(item.getFromImageUrl())
-                .into(imageFrom);
+    public Conversion getItem() {
+        return item;
+    }
 
-        Picasso.with(itemView.getContext())
-                .load(item.getToImageUrl())
-                .into(imageTo);
+    public SpannableString getChangeText(){
+        if(item == null){
+            return new SpannableString("");
+        }
+        return getFormattedChange(item.getChange(), item.getPrice());
     }
 
     private SpannableString getFormattedChange(Double change, String price) {
@@ -65,9 +56,9 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
             colorRes = R.color.colorText;
         }
 
-        Drawable iconDrawable = itemView.getContext().getResources().getDrawable(iconRes);
+        Drawable iconDrawable = context.getResources().getDrawable(iconRes);
         iconDrawable.setBounds(0, 0, iconDrawable.getIntrinsicWidth(), iconDrawable.getIntrinsicHeight());
-        int changeColor = itemView.getContext().getResources().getColor(colorRes);
+        int changeColor = context.getResources().getColor(colorRes);
 
         SpannableString formattedChange = new SpannableString(" " + price);
         formattedChange.setSpan(new ForegroundColorSpan(changeColor), 0, price.length() + 1, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
@@ -75,6 +66,4 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
 
         return formattedChange;
     }
-
-
 }
