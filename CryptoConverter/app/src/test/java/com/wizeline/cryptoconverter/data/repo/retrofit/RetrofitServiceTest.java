@@ -15,7 +15,7 @@ import static org.mockito.Mockito.mock;
 public class RetrofitServiceTest {
     @Test
     public void getTopConversions() throws Exception {
-        RetrofitService retrofitService = new RetrofitService(mock(Context.class));
+        RetrofitCurrencyRepo retrofitService = new RetrofitCurrencyRepo(mock(Context.class));
         CountDownLatch latch = new CountDownLatch(1);
         retrofitService.getTopConversions("mxn").subscribe(conversions -> {
             assertEquals(10, conversions.size());
@@ -29,7 +29,7 @@ public class RetrofitServiceTest {
 
     @Test
     public void convert() throws Exception {
-        RetrofitService retrofitService = new RetrofitService(mock(Context.class));
+        RetrofitCurrencyRepo retrofitService = new RetrofitCurrencyRepo(mock(Context.class));
         CountDownLatch latch = new CountDownLatch(1);
         retrofitService.convert("btc", "mxn").subscribe(conversion -> {
             assertEquals("$", conversion.getToSymbol());

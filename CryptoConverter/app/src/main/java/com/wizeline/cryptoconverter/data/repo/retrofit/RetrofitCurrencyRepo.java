@@ -3,6 +3,7 @@ package com.wizeline.cryptoconverter.data.repo.retrofit;
 import android.content.Context;
 
 import com.wizeline.cryptoconverter.BuildConfig;
+import com.wizeline.cryptoconverter.data.SchedulersProvider;
 import com.wizeline.cryptoconverter.data.model.Conversion;
 import com.wizeline.cryptoconverter.data.model.cryptocompare.Coin;
 import com.wizeline.cryptoconverter.data.model.cryptocompare.ConversionResponse;
@@ -26,12 +27,15 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 /**
  * Created by Miguel Villaseñor on 7/20/17.
  */
-public class RetrofitService implements ConversionRepo {
+public class RetrofitCurrencyRepo implements ConversionRepo {
 
     private CoinsService coinsService;
     private ConversionService conversionService;
+    private SchedulersProvider schedulersProvider;
 
-    public RetrofitService(Context context) {
+    public RetrofitCurrencyRepo(Context context, SchedulersProvider schedulersProvider) {
+
+        this.schedulersProvider = schedulersProvider;
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .cache(new Cache(new File(context.getCacheDir(), "responses"), 10 * 1024 * 1024))
@@ -54,7 +58,8 @@ public class RetrofitService implements ConversionRepo {
 
     }
 
-    @Override public Observable<List<com.wizeline.cryptoconverter.data.model.Conversion>> getTopConversions(String to) {
+    @Override
+    public Observable<List<Conversion>> getTopConversions(String to) {
         return coinsService
                 .getCoins()
                 .flatMap(coinsResponse -> Observable.fromIterable(coinsResponse.getCoins().values()))
@@ -65,7 +70,45 @@ public class RetrofitService implements ConversionRepo {
                     @Override public Observable<List<com.wizeline.cryptoconverter.data.model.Conversion>> apply(@NonNull List<Coin> coins) throws Exception {
                         return convert(coins, to);
                     }
-                });
+                })
+                .subscribeOn(schedulersProvider.backgroundScheduler())
+                .observeOn(schedulersProvider.mainScheduler());
+    }
+
+    @Override
+    public Observable<List<String>> getCoinsList() {
+        return coinsService
+                .getCoins()
+                .flatMap(coinsResponse -> Observable.fromIterable(coinsResponse.getCoins().values()))
+                .sorted((coin, t1) -> coin.getSortOrder() - t1.getSortOrder())
+                .map(Coin::getName)
+                .collect((Callable<List<String>>) ArrayList::new, List::add)
+                .flatMapObservable(Observable::just)
+                .subscribeOn(schedulersProvider.backgroundScheduler())
+                .observeOn(schedulersProvider.mainScheduler());
+    }
+
+    @Override
+    public Observable<Conversion> convert(String from, String to) {
+
+        return conversionService.convert(from.toUpperCase(), to.toUpperCase())
+                .flatMap(response -> {
+                    if(response.getMessage() != null ) {
+                        throw new Error(response.getMessage());
+                    }
+                    String toUpper = to.toUpperCase();
+                    String fromUpper = from.toUpperCase();
+                    double change = Double.parseDouble(response.getRaw().get(fromUpper).get(toUpper).getChange());
+                    String fromSymbol = response.getDisplay().get(fromUpper).get(toUpper).getFrom();
+
+                    String toSymbol = response.getDisplay().get(fromUpper).get(toUpper).getTo();
+
+                    String priceDisplay = response.getDisplay().get(fromUpper).get(toUpper).getPrice();
+                    double price = Double.parseDouble(response.getRaw().get(fromUpper).get(toUpper).getPrice());
+                    return Observable.just(new Conversion(fromSymbol, null, toSymbol, null, change, priceDisplay, price));
+                })
+                .subscribeOn(schedulersProvider.backgroundScheduler())
+                .observeOn(schedulersProvider.mainScheduler());
     }
 
     private Observable<List<com.wizeline.cryptoconverter.data.model.Conversion>> convert(List<Coin> coins, String to) {
@@ -80,6 +123,9 @@ public class RetrofitService implements ConversionRepo {
 
         return conversionService.convert(stringBuilder.toString(), to.toUpperCase())
                 .flatMap(conversionResponse -> {
+                    if(conversionResponse.getMessage() != null ) {
+                        throw new Error(conversionResponse.getMessage());
+                    }
                     List<Conversion> conversions = new ArrayList<>();
                     for (String from : conversionResponse.getRaw().keySet()) {
                         Map<String, ConversionResponse.Conversion> rawConversions = conversionResponse.getRaw().get(from);
@@ -91,10 +137,11 @@ public class RetrofitService implements ConversionRepo {
                             String toSymbol = displayConversions.get(to1).getTo();
                             String toUrl = String.format("http://s.xe.com/themes/xe/images/flags/big/%s.png", to1.toLowerCase());
 
-                            String price = displayConversions.get(to1).getPrice();
+                            String priceDisplay = displayConversions.get(to1).getPrice();
                             double change = Double.parseDouble(rawConversions.get(to1).getChange());
+                            double price = Double.parseDouble(rawConversions.get(to1).getPrice());
 
-                            Conversion conversion = new Conversion(fromSymbol, fromUrl, toSymbol, toUrl, change, price);
+                            Conversion conversion = new Conversion(fromSymbol, fromUrl, toSymbol, toUrl, change, priceDisplay, price);
                             conversions.add(conversion);
                         }
                     }
@@ -109,18 +156,5 @@ public class RetrofitService implements ConversionRepo {
             }
         }
         return null;
-    }
-
-    @Override public Observable<Conversion> convert(String from, String to) {
-        return conversionService.convert(from.toUpperCase(), to.toUpperCase())
-                .flatMap(response -> {
-                    double change = Double.parseDouble(response.getRaw().get(from).get(to).getChange());
-                    String fromSymbol = response.getDisplay().get(from).get(to).getFrom();
-
-                    String toSymbol = response.getDisplay().get(from).get(to).getTo();
-
-                    String price = response.getDisplay().get(from).get(to).getPrice();
-                    return Observable.just(new Conversion(fromSymbol, null, toSymbol, null, change, price));
-                });
     }
 }
