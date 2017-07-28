@@ -77,12 +77,14 @@
     <RelativeLayout
         android:id="@+id/error"
         android:visibility="gone"
+        android:layout_marginTop="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center">
 
         <TextView
             android:id="@+id/error_message"
+            android:textAlignment="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
