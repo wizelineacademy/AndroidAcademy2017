@@ -9,5 +9,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        MyAwesomeCustomTextView v = (MyAwesomeCustomTextView) findViewById(R.id.myview);
+        v.setValues("1", "1,562,500");
+
     }
 }

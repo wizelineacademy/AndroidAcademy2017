@@ -17,8 +17,12 @@ import android.view.View;
 
 public class MyAwesomeCustomTextView extends View {
 
+    private Bitmap bitmap;
     private Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    String text = "Hello World!";
+    String c1 = "";
+    String c2 = "";
+    String c3 = "=";
+    int w = 0;
 
     public MyAwesomeCustomTextView(Context context) {
         super(context);
@@ -32,74 +36,49 @@ public class MyAwesomeCustomTextView extends View {
         super(context, attrs, defStyleAttr);
     }
 
+    public void setValues(String from, String to) {
+        this.c1 = from;
+        this.c2 = to;
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
 
-        try {
-            Typeface font = Typeface.createFromAsset(getResources().getAssets(), "fonts/warsawgothic.otf");
-            if (font != null) {
-                textPaint.setTypeface(font);
-            }
-        } catch (RuntimeException e) {
+        bitmap = BitmapFactory
+                .decodeResource(getResources(), R.drawable.bitcoin);
 
-        }
-        textPaint.setTextSize(convertDpToPixel(20, getContext()));
-        textPaint.setColor(getResources().getColor(R.color.colorAccent));
+        w = Math.round(convertDpToPixel(32, getContext()));
+
+        Rect src = new Rect(0,0,bitmap.getWidth()-1, bitmap.getHeight()-1);
+        Rect dest = new Rect(getPaddingLeft(),getPaddingTop(), w +getPaddingLeft(), w + getPaddingTop());
+        canvas.drawBitmap(bitmap, src, dest, null);
+
+        textPaint.setTextSize(convertDpToPixel(16, getContext()));
 
         Rect textBounds = new Rect();
-        textPaint.getTextBounds(text, 0, text.length(), textBounds);
-        canvas.drawText(text, getPaddingLeft(), getPaddingTop() + textBounds.height(), textPaint);
+        textPaint.getTextBounds(c1, 0, c1.length(), textBounds);
+        canvas.drawText(c1,getPaddingLeft() + dest.width() + 16, dest.height(), textPaint);
+
+        bitmap = BitmapFactory
+                .decodeResource(getResources(), R.drawable.dogecoin);
+
+        Rect dest2 = new Rect(canvas.getWidth() - w - getPaddingRight() ,getPaddingTop(), canvas.getWidth()-getPaddingRight(), w + getPaddingTop());
+        canvas.drawBitmap(bitmap , src, dest2, null);
+
+        textPaint.getTextBounds(c2, 0, c2.length(), textBounds);
+
+        canvas.drawText(c2,dest2.left - textBounds.width() -16, dest2.height(), textPaint);
+
+        textPaint.getTextBounds(c3, 0, c3.length(), textBounds);
+        canvas.drawText(c3,canvas.getWidth()/2 - textBounds.width()/2, dest2.height(), textPaint);
 
         requestLayout();
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-
-        int desiredWidth = measureWidth(widthMeasureSpec);
-        int desiredHeight = measureHeight(heightMeasureSpec);
-
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-
-        int width;
-        int height;
-
-        if (widthMode == MeasureSpec.EXACTLY) {  // match_parent
-            width = widthSize;
-        } else if (widthMode == MeasureSpec.AT_MOST) { // wrap_content
-            width = Math.min(desiredWidth, widthSize);
-        } else {
-            width = desiredWidth;
-        }
-
-        if (heightMode == MeasureSpec.EXACTLY) {
-            height = heightSize;
-        } else if (heightMode == MeasureSpec.AT_MOST) {
-            height = Math.min(desiredHeight, heightSize);
-        } else {
-            height = desiredHeight;
-        }
-
-        setMeasuredDimension(width, height);
-    }
-
-    private int measureWidth(int measureSpec) {
-        int size = getPaddingLeft() + getPaddingRight();
-        Rect bounds = new Rect();
-        textPaint.getTextBounds(text, 0, text.length(), bounds);
-        size += bounds.width();
-        return resolveSizeAndState(size, measureSpec, 0);
-    }
-
-    private int measureHeight(int measureSpec) {
-        int size = getPaddingTop() + getPaddingBottom();
-        Rect bounds = new Rect();
-        textPaint.getTextBounds(text, 0, text.length(), bounds);
-        size += bounds.height();
-        return resolveSizeAndState(size, measureSpec, 0);
+        setMeasuredDimension(widthSize, w +getPaddingTop() + getPaddingBottom());
     }
 
     public static float convertDpToPixel(float dp,Context context){
