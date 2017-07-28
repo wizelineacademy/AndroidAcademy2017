@@ -4,16 +4,21 @@ import android.os.Bundle;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 
+import com.wizeline.cryptoconverter.ConverterApplication;
 import com.wizeline.cryptoconverter.R;
 import com.wizeline.cryptoconverter.conversionList.ListAdapter;
 import com.wizeline.cryptoconverter.data.model.Conversion;
-import com.wizeline.cryptoconverter.data.repo.retrofit.RetrofitService;
 
 import java.util.List;
 
@@ -30,39 +35,37 @@ public class CurrencyListActivity extends AppCompatActivity implements CurrencyL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
-        presenter = new CurrencyListPresenter(this, new RetrofitService(this));
+        presenter = new CurrencyListPresenter(this, ConverterApplication.getConversionRepo());
         init();
     }
 
-    @Override public void showLoading() {
-        if(!swipeRefresh.isRefreshing()) {
+    @Override
+    public void showLoading() {
+        if (!swipeRefresh.isRefreshing()) {
             progressBar.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
         }
     }
 
-    @Override public void hideLoading() {
+    @Override
+    public void hideLoading() {
         progressBar.setVisibility(View.GONE);
         recyclerView.setVisibility(View.VISIBLE);
         swipeRefresh.setRefreshing(false);
     }
 
-    @Override public void showError(String error) {
-        Snackbar.make(recyclerView.getRootView(), error, BaseTransientBottomBar.LENGTH_SHORT).show();
+    @Override
+    public void showError(String error) {
+        Snackbar.make(recyclerView, error, BaseTransientBottomBar.LENGTH_SHORT).show();
     }
 
-    @Override public void showList(List<Conversion> conversionList) {
+    @Override
+    public void showList(List<Conversion> conversionList) {
         adapter.setItems(conversionList);
     }
 
     private void init() {
-        //Init adapter
-        adapter = new ListAdapter();
-
-        //Init recyclerView
-        recyclerView = (RecyclerView) findViewById(R.id.list);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
+        initRecyclerView();
 
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
@@ -71,11 +74,52 @@ public class CurrencyListActivity extends AppCompatActivity implements CurrencyL
         presenter.onCreate();
     }
 
+    private void initRecyclerView() {
+        adapter = new ListAdapter();
 
+        recyclerView = (RecyclerView) findViewById(R.id.list);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                layoutManager.getOrientation());
+        recyclerView.addItemDecoration(dividerItemDecoration);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.currency_list_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.currency) {
+            showCurrencyDialog();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         presenter.onDestroy();
+    }
+
+    public void showCurrencyDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Currency");
+
+        final EditText input = new EditText(this);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", (dialog, which) -> {
+            String currency = input.getText().toString();
+            presenter.setCurrency(currency);
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+        builder.show();
     }
 }

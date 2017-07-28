@@ -2,9 +2,7 @@ package com.wizeline.cryptoconverter.presentation.list;
 
 import com.wizeline.cryptoconverter.data.repo.ConversionRepo;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Miguel Villaseñor on 7/28/17.
@@ -23,32 +21,34 @@ public class CurrencyListPresenter implements CurrencyListContract.CurrencyListP
         currencyListModel = new CurrencyListModel("MXN", null);
     }
 
-    @Override public void onCreate() {
+    @Override
+    public void onCreate() {
         fetchList();
     }
 
-    @Override public void onDestroy() {
+    @Override
+    public void onDestroy() {
         if(disposable != null && !disposable.isDisposed()) {
             disposable.dispose();
         }
     }
 
-    @Override public void fetchList() {
+    @Override
+    public void fetchList() {
         view.showLoading();
         disposable = conversionRepo.getTopConversions(currencyListModel.getToCoin())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(list -> {
                     view.hideLoading();
                     currencyListModel = new CurrencyListModel(currencyListModel.getToCoin(), list);
                     view.showList(currencyListModel.getConversions());
                 }, throwable -> {
                     view.hideLoading();
-                    view.showError("Error fetching conversion list.");
+                    view.showError(throwable.getMessage());
                 });
     }
 
-    @Override public void setCurrency(String currency) {
+    @Override
+    public void setCurrency(String currency) {
         currencyListModel = new CurrencyListModel(currency, currencyListModel.getConversions());
         fetchList();
     }

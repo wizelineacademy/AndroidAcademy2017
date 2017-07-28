@@ -71,7 +71,7 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
 
         SpannableString formattedChange = new SpannableString(" " + price);
         formattedChange.setSpan(new ForegroundColorSpan(changeColor), 0, price.length() + 1, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-        formattedChange.setSpan(new ImageSpan(iconDrawable, DynamicDrawableSpan.ALIGN_BOTTOM), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        formattedChange.setSpan(new ImageSpan(iconDrawable, DynamicDrawableSpan.ALIGN_BASELINE), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         return formattedChange;
     }

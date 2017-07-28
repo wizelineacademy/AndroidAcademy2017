@@ -3,6 +3,7 @@ package com.wizeline.cryptoconverter.data.repo.retrofit;
 import android.content.Context;
 
 import com.wizeline.cryptoconverter.BuildConfig;
+import com.wizeline.cryptoconverter.data.SchedulersProvider;
 import com.wizeline.cryptoconverter.data.model.Conversion;
 import com.wizeline.cryptoconverter.data.model.cryptocompare.Coin;
 import com.wizeline.cryptoconverter.data.model.cryptocompare.ConversionResponse;
@@ -15,8 +16,10 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -26,12 +29,15 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 /**
  * Created by Miguel Villaseñor on 7/20/17.
  */
-public class RetrofitService implements ConversionRepo {
+public class RetrofitCurrencyRepo implements ConversionRepo {
 
     private CoinsService coinsService;
     private ConversionService conversionService;
+    private SchedulersProvider schedulersProvider;
 
-    public RetrofitService(Context context) {
+    public RetrofitCurrencyRepo(Context context, SchedulersProvider schedulersProvider) {
+
+        this.schedulersProvider = schedulersProvider;
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .cache(new Cache(new File(context.getCacheDir(), "responses"), 10 * 1024 * 1024))
@@ -65,7 +71,24 @@ public class RetrofitService implements ConversionRepo {
                     @Override public Observable<List<com.wizeline.cryptoconverter.data.model.Conversion>> apply(@NonNull List<Coin> coins) throws Exception {
                         return convert(coins, to);
                     }
-                });
+                })
+                .subscribeOn(schedulersProvider.backgroundScheduler())
+                .observeOn(schedulersProvider.mainScheduler());
+    }
+
+    @Override public Observable<Conversion> convert(String from, String to) {
+        return conversionService.convert(from.toUpperCase(), to.toUpperCase())
+                .flatMap(response -> {
+                    double change = Double.parseDouble(response.getRaw().get(from).get(to).getChange());
+                    String fromSymbol = response.getDisplay().get(from).get(to).getFrom();
+
+                    String toSymbol = response.getDisplay().get(from).get(to).getTo();
+
+                    String price = response.getDisplay().get(from).get(to).getPrice();
+                    return Observable.just(new Conversion(fromSymbol, null, toSymbol, null, change, price));
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     private Observable<List<com.wizeline.cryptoconverter.data.model.Conversion>> convert(List<Coin> coins, String to) {
@@ -109,18 +132,5 @@ public class RetrofitService implements ConversionRepo {
             }
         }
         return null;
-    }
-
-    @Override public Observable<Conversion> convert(String from, String to) {
-        return conversionService.convert(from.toUpperCase(), to.toUpperCase())
-                .flatMap(response -> {
-                    double change = Double.parseDouble(response.getRaw().get(from).get(to).getChange());
-                    String fromSymbol = response.getDisplay().get(from).get(to).getFrom();
-
-                    String toSymbol = response.getDisplay().get(from).get(to).getTo();
-
-                    String price = response.getDisplay().get(from).get(to).getPrice();
-                    return Observable.just(new Conversion(fromSymbol, null, toSymbol, null, change, price));
-                });
     }
 }
