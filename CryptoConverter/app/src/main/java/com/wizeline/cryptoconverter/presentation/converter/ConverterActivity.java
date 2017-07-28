@@ -1,10 +1,12 @@
 package com.wizeline.cryptoconverter.presentation.converter;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -46,8 +48,11 @@ public class ConverterActivity extends AppCompatActivity implements ConverterCon
         result = (TextView) findViewById(R.id.result);
         errorMessage = (TextView) findViewById(R.id.error_message);
         findViewById(R.id.retry).setOnClickListener(view -> converterPresenter.onCreate());
-        findViewById(R.id.convert).setOnClickListener(view -> startConversion());
-
+        findViewById(R.id.convert).setOnClickListener(view -> {
+            startConversion();
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        });
 
         converterPresenter.onCreate();
     }
@@ -56,7 +61,7 @@ public class ConverterActivity extends AppCompatActivity implements ConverterCon
         String amountString = this.amount.getText().toString();
         String toString = this.to.getText().toString();
 
-        if(TextUtils.isEmpty(amountString) || TextUtils.isEmpty(toString)) {
+        if (TextUtils.isEmpty(amountString) || TextUtils.isEmpty(toString)) {
             showError("Please fill the empty fields");
         } else {
             float amountFloat = Float.parseFloat(amountString);
