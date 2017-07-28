@@ -24,7 +24,6 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
     ImageView imageFrom;
     TextView textFrom;
     ImageView imageTo;
-    TextView textTo;
     TextView textChange;
 
 
@@ -33,15 +32,13 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
         imageFrom = itemView.findViewById(R.id.image_from);
         textFrom = itemView.findViewById(R.id.text_from);
         imageTo = itemView.findViewById(R.id.image_to);
-        textTo = itemView.findViewById(R.id.text_to);
         textChange = itemView.findViewById(R.id.text_change);
     }
 
     public void bindItem(Conversion item) {
         //Bind Text
         textFrom.setText(item.getFromSymbol());
-        textTo.setText(item.getToSymbol());
-        textChange.setText(getFormattedChange(item.getChange()));
+        textChange.setText(getFormattedChange(item.getChange(), item.getPrice()));
 
         //Bind Images
         Picasso.with(itemView.getContext())
@@ -53,8 +50,7 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
                 .into(imageTo);
     }
 
-    private SpannableString getFormattedChange(Double change) {
-        String message = String.format("%.2f", change);
+    private SpannableString getFormattedChange(Double change, String price) {
         int iconRes;
         int colorRes;
 
@@ -73,8 +69,8 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
         iconDrawable.setBounds(0, 0, iconDrawable.getIntrinsicWidth(), iconDrawable.getIntrinsicHeight());
         int changeColor = itemView.getContext().getResources().getColor(colorRes);
 
-        SpannableString formattedChange = new SpannableString(" " + message);
-        formattedChange.setSpan(new ForegroundColorSpan(changeColor), 0, message.length() + 1, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+        SpannableString formattedChange = new SpannableString(" " + price);
+        formattedChange.setSpan(new ForegroundColorSpan(changeColor), 0, price.length() + 1, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         formattedChange.setSpan(new ImageSpan(iconDrawable, DynamicDrawableSpan.ALIGN_BOTTOM), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         return formattedChange;
