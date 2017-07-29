@@ -14,12 +14,19 @@ public class ConversionResponse {
     @Json(name = "DISPLAY")
     private Map<String, Map<String, Conversion>> display;
 
+    @Json(name = "Message")
+    private String message;
+
     public Map<String, Map<String, Conversion>> getRaw() {
         return raw;
     }
 
     public Map<String, Map<String, Conversion>> getDisplay() {
         return display;
+    }
+
+    public String getMessage() {
+        return message;
     }
 
     public static class Conversion {
