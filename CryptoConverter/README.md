@@ -1,12 +1,12 @@
-#Gradle Challenge
+# Gradle Challenge
 
-##Create two flavor
+## Create two flavor
     Differents
 -  Application id
 -  Currency (check ListActivity)
 -  Version code
 
-##Only the second flavor
+## Only the second flavor
     Differents
  - Number of elements (check RetrofitService)
  - Style colors
