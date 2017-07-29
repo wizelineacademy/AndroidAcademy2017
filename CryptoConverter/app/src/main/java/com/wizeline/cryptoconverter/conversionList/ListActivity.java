@@ -30,7 +30,7 @@ public class ListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list);
         init();
         Observable<List<Conversion>> baseObservable = ConverterApplication.getConversionRepo().getTopConversions("mxn");
-        loadData(getSortedList(getFilterNegative(getOneAndTenObservable(baseObservable))));
+        loadData(getOneAndTenObservable(baseObservable));
     }
 
     private void init() {
@@ -43,26 +43,19 @@ public class ListActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
-    private Observable<List<Conversion>> getFilterNegative(Observable<List<Conversion>> observable) {
+    private Observable<List<Conversion>> getFiltered(Observable<List<Conversion>> observable) {
         return observable
                 .flatMap(Observable::fromIterable)
-                .filter(conversion -> conversion.getChange() > 0).toList()
+                .filter(conversion -> conversion.getPrice() < 1000).toList()
                 .toObservable();
     }
 
     private Observable<List<Conversion>> getSortedList(Observable<List<Conversion>> observable) {
         return observable
                 .flatMap(Observable::fromIterable)
-                .toSortedList((conversion, t1) -> {
-                    char firstLetter = conversion.getFromSymbol().charAt(0);
-                    char secondLetter = t1.getFromSymbol().charAt(0);
-                    if (firstLetter > secondLetter) {
-                        return 1;
-                    } else if (firstLetter < secondLetter) {
-                        return -1;
-                    }
-                    return 0;
-                }).toObservable();
+                .toSortedList((conversion, t1) ->
+                        String.CASE_INSENSITIVE_ORDER.compare(conversion.getFromSymbol(), t1.getFromSymbol()))
+                .toObservable();
     }
 
     private Observable<List<Conversion>> getOneAndTenObservable(Observable<List<Conversion>> observable) {
@@ -83,8 +76,7 @@ public class ListActivity extends AppCompatActivity {
                     );
                     return Observable.fromArray(conversion, conversionTen);
                 })
-                .toSortedList((conversion, t1) ->
-                        String.CASE_INSENSITIVE_ORDER.compare(conversion.getFromSymbol(), t1.getFromSymbol()))
+                .toList()
                 .toObservable();
     }
 
