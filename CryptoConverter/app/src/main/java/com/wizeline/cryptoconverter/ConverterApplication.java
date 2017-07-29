@@ -2,6 +2,7 @@ package com.wizeline.cryptoconverter;
 
 import android.app.Application;
 
+import com.squareup.leakcanary.LeakCanary;
 import com.wizeline.cryptoconverter.data.repo.ConversionRepo;
 import com.wizeline.cryptoconverter.data.repo.retrofit.RetrofitService;
 
@@ -16,6 +17,10 @@ public class ConverterApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            return;
+        }
+        LeakCanary.install(this);
         conversionRepo = new RetrofitService(this);
     }
 

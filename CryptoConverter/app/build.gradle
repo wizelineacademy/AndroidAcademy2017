@@ -27,6 +27,20 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    productFlavors{
+        mxn{
+            applicationIdSuffix ".mxn"
+            buildConfigField "String", "CURRENCY", '"mxn"'
+            buildConfigField "Integer", "MAX_TOP", '10'
+        }
+        usd{
+            applicationIdSuffix ".usd"
+            versionCode 2
+            buildConfigField "String", "CURRENCY", '"usd"'
+            buildConfigField "Integer", "MAX_TOP", '20'
+        }
+    }
+
 }
 
 dependencies {
@@ -48,4 +62,7 @@ dependencies {
     compile 'org.mockito:mockito-android:2.8.47'
     compile 'com.android.support:design:26.+'
     testCompile 'junit:junit:4.12'
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
 }

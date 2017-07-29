@@ -1,6 +1,7 @@
 package com.wizeline.cryptoconverter.conversionList;
 
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -65,9 +66,9 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
             colorRes = R.color.colorText;
         }
 
-        Drawable iconDrawable = itemView.getContext().getResources().getDrawable(iconRes);
+        Drawable iconDrawable = ContextCompat.getDrawable(itemView.getContext(),iconRes);
         iconDrawable.setBounds(0, 0, iconDrawable.getIntrinsicWidth(), iconDrawable.getIntrinsicHeight());
-        int changeColor = itemView.getContext().getResources().getColor(colorRes);
+        int changeColor = ContextCompat.getColor(itemView.getContext(),colorRes);
 
         SpannableString formattedChange = new SpannableString(" " + price);
         formattedChange.setSpan(new ForegroundColorSpan(changeColor), 0, price.length() + 1, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);

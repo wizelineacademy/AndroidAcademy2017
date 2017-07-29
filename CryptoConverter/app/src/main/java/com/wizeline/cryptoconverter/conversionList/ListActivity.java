@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.wizeline.cryptoconverter.BuildConfig;
 import com.wizeline.cryptoconverter.ConverterApplication;
 import com.wizeline.cryptoconverter.R;
 import com.wizeline.cryptoconverter.data.model.Conversion;
@@ -44,7 +45,7 @@ public class ListActivity extends AppCompatActivity {
     private void loadData() {
         disposable = ConverterApplication
                 .getConversionRepo()
-                .getTopConversions("mxn")
+                .getTopConversions(BuildConfig.CURRENCY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableObserver<List<Conversion>>() {

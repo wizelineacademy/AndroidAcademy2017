@@ -59,7 +59,7 @@ public class RetrofitService implements ConversionRepo {
                 .getCoins()
                 .flatMap(coinsResponse -> Observable.fromIterable(coinsResponse.getCoins().values()))
                 .sorted((coin, t1) -> coin.getSortOrder() - t1.getSortOrder())
-                .take(10)
+                .take(BuildConfig.MAX_TOP)
                 .collect((Callable<List<Coin>>) ArrayList::new, List::add)
                 .flatMapObservable(new Function<List<Coin>, Observable<List<com.wizeline.cryptoconverter.data.model.Conversion>>>() {
                     @Override public Observable<List<com.wizeline.cryptoconverter.data.model.Conversion>> apply(@NonNull List<Coin> coins) throws Exception {
