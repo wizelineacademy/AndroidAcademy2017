@@ -11,14 +11,14 @@ public class CurrencyListPresenter implements CurrencyListContract.CurrencyListP
 
     private CurrencyListContract.CurrencyListView view;
     private ConversionRepo conversionRepo;
-    private CurrencyListModel currencyListModel;
+    private CurrencyListStateModel currencyListModel;
 
     private Disposable disposable;
 
     public CurrencyListPresenter(CurrencyListContract.CurrencyListView view, ConversionRepo conversionRepo) {
         this.view = view;
         this.conversionRepo = conversionRepo;
-        currencyListModel = new CurrencyListModel("MXN", null);
+        currencyListModel = new CurrencyListStateModel("MXN", null);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class CurrencyListPresenter implements CurrencyListContract.CurrencyListP
         disposable = conversionRepo.getTopConversions(currencyListModel.getToCoin())
                 .subscribe(list -> {
                     view.hideLoading();
-                    currencyListModel = new CurrencyListModel(currencyListModel.getToCoin(), list);
+                    currencyListModel = new CurrencyListStateModel(currencyListModel.getToCoin(), list);
                     view.showList(currencyListModel.getConversions());
                 }, throwable -> {
                     view.hideLoading();
@@ -49,7 +49,7 @@ public class CurrencyListPresenter implements CurrencyListContract.CurrencyListP
 
     @Override
     public void setCurrency(String currency) {
-        currencyListModel = new CurrencyListModel(currency, currencyListModel.getConversions());
+        currencyListModel = new CurrencyListStateModel(currency, currencyListModel.getConversions());
         fetchList();
     }
 }
