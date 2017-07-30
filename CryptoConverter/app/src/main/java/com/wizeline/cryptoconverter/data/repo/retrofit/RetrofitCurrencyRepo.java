@@ -1,7 +1,6 @@
 package com.wizeline.cryptoconverter.data.repo.retrofit;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.wizeline.cryptoconverter.BuildConfig;
 import com.wizeline.cryptoconverter.data.SchedulersProvider;
