@@ -38,7 +38,7 @@ public class ListItemViewModel extends ViewModel {
         if(item == null){
             return new SpannableString("");
         }
-        return getFormattedChange(item.getChange(), item.getPrice());
+        return getFormattedChange(item.getChange(), item.getPriceDisplay());
     }
 
     private SpannableString getFormattedChange(Double change, String price) {
